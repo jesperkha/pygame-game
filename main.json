@@ -1,0 +1,12 @@
+{
+	"items": {
+		"pistol": {
+			"sprite_path": "./src/guns/pistol/pistol.png",
+			"animation_path": "./src/guns/pistol/pistol-shoot",
+			"frames": 3,
+			"offset": 16,
+			"size": [32, 32],
+			"recoil": 5
+		}
+	}
+}

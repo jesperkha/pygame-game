@@ -10,7 +10,7 @@ class Game:
     PAUSE = 2
 
     # Game
-    HEIGHT = 240
+    HEIGHT = 320
     WIDTH = int(HEIGHT * ASPECT_RATIO)
     STATE = INGAME
 

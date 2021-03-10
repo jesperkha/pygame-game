@@ -1,6 +1,15 @@
 # Collision functions
 
-from math import atan, sqrt, degrees
+def check_collision_rect_points(x1, y1, w1, h1, x2, y2, w2, h2):
+    top = y1 > y2 + h2
+    left = x1 > x2 + w2
+    right = x1 + w1 < x2
+    bottom = y1 + h1 < y2
+
+    if top or left or right or bottom:
+        return False
+    else:
+        return True
 
 
 def check_collision_rect(a, b) -> bool:

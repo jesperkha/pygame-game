@@ -20,15 +20,19 @@ from platform import update_platforms, Platform
 from bullet import update_bullets
 from guns import Gun
 from utility.files import load_json
+from tilemap import Tilemap
 
-plat = Platform((100, Game.HEIGHT - 30), (50, 10))
-plat2 = Platform((200, Game.HEIGHT - 30), (50, 10), True)
+# plat = Platform((100, Game.HEIGHT - 30), (50, 10))
+# plat2 = Platform((200, Game.HEIGHT - 30), (50, 10), True)
 
 g = load_json("./main.json")["items"]["pistol"]
 gun = Gun(g["size"], g["offset"], g["sprite_path"], g["animation_path"], g["frames"], g["recoil"])
 gun.animation_player.init()
 
-player = Player((0, 0), (16, 16), [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], gun)
+player = Player((20, 0), (16, 16), [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], gun)
+
+# tm = Tilemap("./_.json")
+tm = Tilemap("./col.json")
 
 # -------------------------------------------
 
@@ -60,11 +64,15 @@ while run:
 
     # Update environment and entities
     update_controllers()
+
+    tm.update(buffer)
     
     if Game.STATE == Game.INGAME:
         update_platforms(buffer)
         update_bullets(buffer)
         update_players(buffer)
+        
+        player.do_tile_collision(tm)
 
     # Window rendering and buffer sizing
     window.fill((100, 100, 100))

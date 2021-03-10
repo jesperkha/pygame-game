@@ -7,7 +7,7 @@ from threading import Timer
 
 from utility.vector import Vector
 from utility.controller import Controller
-from utility.collision import check_collision_rect
+from utility.collision import check_collision_rect, check_collision_rect_points
 
 from VARIABLES import Game
 from platform import Platform
@@ -217,3 +217,47 @@ class Player:
     def finish_reload(self):
         self.ammo = self.mag_size
         self.RELOADING = False
+
+    
+    # Do collision for tile
+    # Called from do_tile_collision()
+    def tile_collision_side(self, x: int, y: int, tilesize: int, type: int) -> None:
+        collision_threshold = self.terminal_velocity
+
+        # Relative to the player
+        if abs(y - (self.pos.y + self.size.y)) <= collision_threshold and self.vel.y >= 0:
+            if type == 2 or type == 0 or type == 1:
+                self.vel.y = 0
+                self.pos.y = y - self.size.y
+                self.jumping = False
+
+        elif abs((x + tilesize) - self.pos.x) <= collision_threshold and self.vel.x < 0:
+            if type == 5 or type == 0 or type == 1:
+                self.vel.x = 0
+                self.pos.x = x + tilesize
+
+        elif abs(x - (self.pos.x + self.size.x)) <= collision_threshold and self.vel.x > 0:
+            if type == 4 or type == 0 or type == 1:
+                self.vel.x = 0
+                self.pos.x = x - self.size.x
+
+        elif abs((y + tilesize) - self.pos.y) <= collision_threshold and self.vel.y < 0:
+            if type == 3 or type == 0:
+                self.pos.y = y + tilesize
+                self.vel.y *= -0.5
+
+    
+    # Handles collision with a tilemap
+    # Called from ?
+    def do_tile_collision(self, tilemap):
+        for tile in tilemap.tilemap:
+            # ALL - 0
+            # JUMP THROUGH - 1
+            # TOP ONLY - 2
+            # BOTTOM ONLY - 3
+            # LEFT ONLY - 4
+            # RIGHT ONLY - 5
+            if check_collision_rect_points(self.pos.x, self.pos.y, self.size.x, self.size.y, tile[2], tile[3], tilemap.tilesize, tilemap.tilesize):
+                if tile[0] < 6: # Indexes more than 5 are deco
+                    self.tile_collision_side(tile[2], tile[3], tilemap.tilesize, tile[0])
+            

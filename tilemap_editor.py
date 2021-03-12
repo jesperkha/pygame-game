@@ -16,7 +16,27 @@
 # LEFT ONLY - 4
 # RIGHT ONLY - 5
 # Indexes more than 5 are decoration
-MY_BLOCKS = ["./src/1.png", "./src/bullet/bullet-left.png", "./src/cursor.png"]
+
+MY_BLOCKS = [
+    "./src/tiles/right.png",
+    "./src/tiles/bottom.png",
+    "./src/tiles/left.png",
+    "./src/tiles/top.png",
+    "./src/tiles/corner-top-right.png",
+    "./src/tiles/corner-top-left.png",
+    "./src/tiles/corner-bottom-right.png",
+    "./src/tiles/corner-bottom-left.png",
+    "./src/tiles/fill.png",
+    "./src/tiles/platform-middle.png",
+    "./src/tiles/platform-right.png",
+    "./src/tiles/platform-left.png",
+    "./src/tiles/deco-1.png",
+    "./src/tiles/deco-2.png",
+    "./src/tiles/deco-3.png",
+    "./src/tiles/deco-4.png",
+    "./src/tiles/deco-5.png",
+]
+
 BLOCKS_SRC = [f"./src/collisionmap/{x}.png" for x in range(6)] + MY_BLOCKS
 
 # Files are save as json in this format:
@@ -37,11 +57,10 @@ pygame.init()
 
 scale = 2
 tilesize = 16
-tile_width = 32
-tile_height = 20
-
-width = 512
+width = 560
 height = 320
+tile_width = int(width / tilesize)
+tile_height = int(height / tilesize)
 
 window = pygame.display.set_mode((width * scale, height * scale), pygame.RESIZABLE)
 clock = pygame.time.Clock()
@@ -52,7 +71,6 @@ BLOCKS = [pygame.transform.scale(pygame.image.load(x).convert_alpha(), (tilesize
 # Cursor
 class cursor:
     pos = [0, 0]
-    img = pygame.transform.scale(pygame.image.load("./src/cursor.png"), (tilesize * scale, tilesize * scale))
     controller = Controller()
     tile = 1
 

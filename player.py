@@ -42,6 +42,7 @@ class Player:
         #     self.image = transform.scale(self.image, (self.size.x, self.size.y))
         # else:
         self.image = None
+        self.tilemap = None
 
         # Key controls
         self.controller = Controller()
@@ -98,10 +99,17 @@ class Player:
             self.jumping = False
             self.vel.y = 0
 
-        if self.pos.x < 0:
-            self.pos.x = 0
-        elif self.pos.x + self.size.x > Game.WIDTH:
-            self.pos.x = Game.WIDTH - self.size.x
+        if not Game.WALL_LOOP:
+            if self.pos.x < 0:
+                self.pos.x = 0
+            elif self.pos.x + self.size.x > Game.WIDTH:
+                self.pos.x = Game.WIDTH - self.size.x
+
+        else:
+            if self.pos.x < 0:
+                self.pos.x = Game.WIDTH - self.size.x
+            elif self.pos.x + self.size.x > Game.WIDTH:
+                self.pos.x = 0
         
         if self.pos.y < 0:
             self.pos.y = 0
@@ -109,10 +117,15 @@ class Player:
 
 
         # Platform collision
-        for p in Platform.platforms:
-            if check_collision_rect(self, p):
-                side = self.find_collision(p)
-                self.handle_collision(side, p)
+        # for p in Platform.platforms:
+        #     if check_collision_rect(self, p):
+        #         side = self.find_collision(p)
+        #         self.handle_collision(side, p)
+            
+        
+        # Tilemap collision
+        if self.tilemap:
+            self.do_tile_collision(self.tilemap)
 
         # ------------------------------------------------------
 
@@ -213,7 +226,7 @@ class Player:
 
 
     # Stops reloading process
-    # Called from reload_gun() 
+    # Called from reload_gun()
     def finish_reload(self):
         self.ammo = self.mag_size
         self.RELOADING = False
@@ -224,23 +237,26 @@ class Player:
     def tile_collision_side(self, x: int, y: int, tilesize: int, type: int) -> None:
         collision_threshold = self.terminal_velocity
 
-        # Relative to the player
+        # Top of tile
         if abs(y - (self.pos.y + self.size.y)) <= collision_threshold and self.vel.y >= 0:
             if type == 2 or type == 0 or type == 1:
                 self.vel.y = 0
                 self.pos.y = y - self.size.y
                 self.jumping = False
 
-        elif abs((x + tilesize) - self.pos.x) <= collision_threshold and self.vel.x < 0:
+        # Right of tile
+        elif abs((x + tilesize) - self.pos.x) <= collision_threshold and self.vel.x <= 0:
             if type == 5 or type == 0 or type == 1:
                 self.vel.x = 0
                 self.pos.x = x + tilesize
 
-        elif abs(x - (self.pos.x + self.size.x)) <= collision_threshold and self.vel.x > 0:
+        # Left of tile
+        elif abs(x - (self.pos.x + self.size.x)) <= collision_threshold and self.vel.x >= 0:
             if type == 4 or type == 0 or type == 1:
                 self.vel.x = 0
                 self.pos.x = x - self.size.x
 
+        # Bottom of tile
         elif abs((y + tilesize) - self.pos.y) <= collision_threshold and self.vel.y < 0:
             if type == 3 or type == 0:
                 self.pos.y = y + tilesize
@@ -248,7 +264,7 @@ class Player:
 
     
     # Handles collision with a tilemap
-    # Called from ?
+    # Called from update()
     def do_tile_collision(self, tilemap):
         for tile in tilemap.tilemap:
             # ALL - 0

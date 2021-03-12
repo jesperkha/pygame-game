@@ -42,7 +42,7 @@ class Player:
         #     self.image = transform.scale(self.image, (self.size.x, self.size.y))
         # else:
         self.image = None
-        self.tilemap = None
+        self.collision_map = None
 
         # Key controls
         self.controller = Controller()
@@ -124,8 +124,8 @@ class Player:
             
         
         # Tilemap collision
-        if self.tilemap:
-            self.do_tile_collision(self.tilemap)
+        if self.collision_map:
+            self.do_tile_collision(self.collision_map)
 
         # ------------------------------------------------------
 

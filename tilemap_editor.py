@@ -26,6 +26,10 @@ MY_BLOCKS = [
     "./src/tiles/corner-top-left.png",
     "./src/tiles/corner-bottom-right.png",
     "./src/tiles/corner-bottom-left.png",
+    "./src/tiles/inside-corner-bottom-left.png",
+    "./src/tiles/inside-corner-bottom-right.png",
+    "./src/tiles/inside-corner-top-left.png",
+    "./src/tiles/inside-corner-top-right.png",
     "./src/tiles/fill.png",
     "./src/tiles/platform-middle.png",
     "./src/tiles/platform-right.png",
@@ -164,7 +168,7 @@ def save_to_file():
     f.close()
     global run
     run = False
-    print("Remember to delete the extra comma!")
+    print("\nRemember to save the file!\n")
 
 
 # Start of program

@@ -16,24 +16,24 @@ fullscreen = False
 # ---------------- TEST ZONE ----------------
 
 from player import Player, update_players
-from platform import update_platforms, Platform
 from bullet import update_bullets
 from guns import Gun
 from utility.files import load_json
 from tilemap import Tilemap
 
-# plat = Platform((100, Game.HEIGHT - 30), (50, 10))
-# plat2 = Platform((200, Game.HEIGHT - 30), (50, 10), True)
-
-background = pygame.image.load("./src/bg2.png")
-
 g = load_json("./main.json")["items"]["pistol"]
 gun = Gun(g["size"], g["offset"], g["sprite_path"], g["animation_path"], g["frames"], g["recoil"])
 gun.animation_player.init()
 
+LEVEL = 2
+level_json = load_json(f"./levels/level{LEVEL}.json")
+
+background = pygame.image.load(level_json["background"])
+
 player = Player((20, 0), (16, 16), [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], gun)
-player.tilemap = Tilemap("./collision.json")
-tm = Tilemap("./tilemap.json")
+player.collision_map = Tilemap(level_json["collision_map"])
+tm = Tilemap(level_json["tilemap"])
+
 
 # -------------------------------------------
 
@@ -61,19 +61,16 @@ while run:
             resize(event.w, event.h)
 
     pygame.display.update()
-    # buffer.fill((0, 0, 0))
-    # Draw background image
-    buffer.blit(background, (0, 0))
+    buffer.fill((0, 0, 0))
 
-    # Update environment and entities
     update_controllers()
     
     if Game.STATE == Game.INGAME:
-        update_platforms(buffer)
+        buffer.blit(background, (0, 0))
         update_bullets(buffer)
         update_players(buffer)
+        tm.update(buffer)
 
-    tm.update(buffer)
         
     # Window rendering and buffer sizing
     window.fill((0, 0, 0))

@@ -3,6 +3,7 @@ class Game:
     # Misc
     FPS = 60
     ASPECT_RATIO = 560 / 320
+    TILESIZE = 16
 
     # Gamestates
     MENU = 0
@@ -14,6 +15,7 @@ class Game:
     WIDTH = int(HEIGHT * ASPECT_RATIO)
     STATE = INGAME
     WALL_LOOP = True
+    TILEMAP = None
 
     # Player
     JUMP_HEIGHT = 7

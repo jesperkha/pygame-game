@@ -17,6 +17,8 @@
 # RIGHT ONLY - 5
 # Indexes more than 5 are decoration
 
+SAVE_FOLDER = "levels/tilemaps"
+
 MY_BLOCKS = [
     "./src/tiles/right.png",
     "./src/tiles/bottom.png",
@@ -152,7 +154,7 @@ def save_to_file():
     if filename == "":
         return
 
-    f = open(f"{filename}.json", "w+")
+    f = open(f"./{SAVE_FOLDER}/{filename}.json", "w+")
     f.write("[")
 
     for x in range(len(grid)):
@@ -175,7 +177,7 @@ def save_to_file():
 def open_json_file():
     f = input("Open file: ")
     if f != "":
-        json = load_json(f"{f}.json")
+        json = load_json(f"./{SAVE_FOLDER}/{f}.json")
         for n in json:
             x = int(n[2] / tilesize)
             y = int(n[3] / tilesize)

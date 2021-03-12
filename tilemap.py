@@ -2,10 +2,11 @@
 
 from utility.files import load_json
 from pygame import image
+from VARIABLES import Game
 
 class Tilemap:
 
-    tilesize = 16
+    tilesize = Game.TILESIZE
 
     def __init__(self, filename: str) -> None:
         self.tilemap = load_json(filename)

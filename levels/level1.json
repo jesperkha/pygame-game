@@ -3,5 +3,6 @@
 	"background": "./src/background/bg2.png",
 	"tilemap": "./levels/tilemaps/level-1T.json",
 	"collision_map": "./levels/tilemaps/level-1C.json",
-	"music": ""
+	"music": "",
+	"screen_loop": true
 }

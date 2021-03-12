@@ -1,13 +1,14 @@
 import pygame
-from utility.controller import update_controllers
+from utility.controller import update_controllers, Controller
 from VARIABLES import Game
 
 pygame.init()
 clock = pygame.time.Clock()
 
 # Window and window buffer
+START_SCALE = 1.3
 monitor_size = [pygame.display.Info().current_w, pygame.display.Info().current_h]
-window = pygame.display.set_mode((800, 450), pygame.RESIZABLE)
+window = pygame.display.set_mode((int(800 * START_SCALE), int(450 * START_SCALE)), pygame.RESIZABLE)
 buffer = pygame.Surface((Game.WIDTH, Game.HEIGHT))
 buffer_scale = [int(window.get_height() * Game.ASPECT_RATIO), window.get_height()]
 buffer_pos = [(window.get_width() - buffer.get_width()) / 2, 0]
@@ -20,20 +21,26 @@ from bullet import update_bullets
 from guns import Gun
 from utility.files import load_json
 from tilemap import Tilemap
-
-g = load_json("./main.json")["items"]["pistol"]
-gun = Gun(g["size"], g["offset"], g["sprite_path"], g["animation_path"], g["frames"], g["recoil"])
-gun.animation_player.init()
+from item import update_items, create_item, Item
 
 LEVEL = 2
+
+gun = Gun(load_json("./main.json")["items"]["pistol"])
+gun.animation_player.init()
+
 level_json = load_json(f"./levels/level{LEVEL}.json")
+Game.WALL_LOOP = level_json["screen_loop"]
 
 background = pygame.image.load(level_json["background"])
 
 player = Player((20, 0), (16, 16), [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], gun)
 player.collision_map = Tilemap(level_json["collision_map"])
-tm = Tilemap(level_json["tilemap"])
 
+Game.TILEMAP = Tilemap(level_json["tilemap"])
+Item.collision_map = load_json(level_json["collision_map"])
+
+c = Controller()
+c.listen(pygame.K_k, "keypressed", create_item)
 
 # -------------------------------------------
 
@@ -55,7 +62,7 @@ while run:
         
         if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
             fullscreen = not fullscreen
-            resize(800, 450)
+            resize(int(800 * START_SCALE), int(450 * START_SCALE))
 
         if event.type == pygame.VIDEORESIZE:
             resize(event.w, event.h)
@@ -69,7 +76,9 @@ while run:
         buffer.blit(background, (0, 0))
         update_bullets(buffer)
         update_players(buffer)
-        tm.update(buffer)
+        update_items(buffer)
+        if Game.TILEMAP:
+            Game.TILEMAP.update(buffer)
 
         
     # Window rendering and buffer sizing
@@ -81,7 +90,7 @@ while run:
         buffer_height = int(monitor_size[0] / Game.ASPECT_RATIO)
 
     buffer_scale = [buffer_width, buffer_height]
-    buffer_pos = [(window.get_width() - buffer_width) / 2, (window.get_height() - buffer_height) / 2]
+    buffer_pos = [int((window.get_width() - buffer_width) / 2), int((window.get_height() - buffer_height) / 2)]
     window.blit(pygame.transform.scale(buffer, buffer_scale), buffer_pos)
 
 

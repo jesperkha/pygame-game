@@ -3,11 +3,10 @@
 from pygame import image, transform
 
 class AnimationPlayer:
-    def __init__(self, animation_frames_path: str, num_frames: int, fps: int, size: tuple) -> None:
+    def __init__(self, animation_frames_path: str, num_frames: int, fps: int) -> None:
         self.num_frames = num_frames
         self.path = animation_frames_path
         self.frames = []
-        self.size = size
         
         self.framerate = int(60 / fps)
         self.tick = 0
@@ -18,7 +17,7 @@ class AnimationPlayer:
         # Adds pygame images to frames list
         for n in range(self.num_frames):
             s = image.load(f"{self.path}{n}.png").convert_alpha()
-            self.frames.append(transform.scale(s, self.size))
+            self.frames.append(s)
 
     
     def animate(self, dir: int, stop_when_done: bool = False) -> object:

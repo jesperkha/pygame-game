@@ -2,13 +2,11 @@
 
 from utility.vector import Vector
 from VARIABLES import Game
-from pygame import draw, image, transform
+from pygame import image
 
 def load():
     s1 = image.load("./src/bullet/bullet-left.png").convert_alpha()
     s2 = image.load("./src/bullet/bullet-right.png").convert_alpha()
-    s1 = transform.scale(s1, (Bullet.w, Bullet.h))
-    s2 = transform.scale(s2, (Bullet.w, Bullet.h))
     Bullet.sprites = [s1, s2]
 
 
@@ -18,7 +16,7 @@ def update_bullets(win):
 
 
 def init_bullets():
-    for b in range(Game.BULLET_CAP):
+    for _ in range(Game.BULLET_CAP):
         Bullet((0, 0), 1)
 
 
@@ -28,8 +26,8 @@ class Bullet:
     sprites = []
     live_bullets = 0
 
-    w = 8
-    h = 8
+    w = 16
+    h = 16
 
     def __init__(self, pos: tuple, dir: int) -> None:
         self.pos = Vector(pos[0], pos[1])

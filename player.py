@@ -1,9 +1,8 @@
 # Player class
 
+from utility.methods import set_timeout
 from pygame import draw
 from functools import partial
-from math import dist
-from threading import Timer
 
 from utility.vector import Vector
 from utility.controller import Controller
@@ -225,9 +224,7 @@ class Player:
     # Called from shoot()
     def reload_gun(self):
         self.RELOADING = True
-        # Set timeout (kinda)
-        t = Timer(Game.RELOAD_TIME, self.finish_reload)
-        t.start()
+        set_timeout(self.finish_reload, Game.RELOAD_TIME)
 
 
     # Stops reloading process
@@ -289,10 +286,10 @@ class Player:
         for i in Item.items:
             distance = Vector.dist(self.pos, i.pos)
             if distance < self.grab_range:
-                self.pick_up_item(i.type)
+                self.pick_up_item(i)
 
 
     # Handles item pickup
     # Called from check_for_items()
-    def pick_up_item(self, type):
-        Item.items[0].die()
+    def pick_up_item(self, item):
+        item.die()

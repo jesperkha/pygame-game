@@ -12,14 +12,19 @@ def update_items(win):
 
 
 def create_item():
-    if Item.collision_map and not Item.items[0].LIVE:
-        Item.items[0].spawn()
-        # rotate list
-        Item.items = Item.items[1:] + Item.items[:1]
+    spawnable_items = []
+    if Item.collision_map:
+        for i in Item.items:
+            if not i.LIVE:
+                spawnable_items.append(i)
+
+        if len(spawnable_items) != 0:
+            random_index = randrange(0, len(spawnable_items))
+            spawnable_items[random_index].spawn()
 
 
 def load_items():
-    for n in range(1):
+    for n in range(2):
         Item(f"./src/items/item{n}.png", n + 1)
 
 

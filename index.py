@@ -22,8 +22,9 @@ from guns import Gun
 from utility.files import load_json
 from tilemap import Tilemap
 from item import update_items, create_item, Item
+from timer import GameTimer
 
-LEVEL = 2
+LEVEL = 1
 
 gun = Gun(load_json("./main.json")["items"]["pistol"])
 gun.animation_player.init()
@@ -41,6 +42,8 @@ Item.collision_map = load_json(level_json["collision_map"])
 
 c = Controller()
 c.listen(pygame.K_k, "keypressed", create_item)
+
+t = GameTimer()
 
 # -------------------------------------------
 
@@ -74,11 +77,12 @@ while run:
     
     if Game.STATE == Game.INGAME:
         buffer.blit(background, (0, 0))
+        if Game.TILEMAP:
+            Game.TILEMAP.update(buffer)
         update_bullets(buffer)
         update_players(buffer)
         update_items(buffer)
-        if Game.TILEMAP:
-            Game.TILEMAP.update(buffer)
+        t.update(buffer)
 
         
     # Window rendering and buffer sizing

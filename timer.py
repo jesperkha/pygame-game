@@ -22,29 +22,31 @@ class GameTimer:
             self.time += 1 # seconds
 
         display_time = self.convert_to_minutes_and_seconds()
-        pos = [0, 0]
+        space = 7
+
+        pos = [Game.WIDTH - 5*space - 16, 16]
         
         # Display minutes
         if len(display_time[0]) == 1:
             win.blit(self.nums["0"], pos)
-            pos[0] += Game.TILESIZE
+            pos[0] += space
 
         for min in display_time[0]:
             win.blit(self.nums[min], pos)
-            pos[0] += Game.TILESIZE
-        
+            pos[0] += space
+
         # Display seperation colon
         win.blit(self.colon, pos)
-        pos[0] += Game.TILESIZE
+        pos[0] += space
 
         # Display seconds
         if len(display_time[1]) == 1:
             win.blit(self.nums["0"], pos)
-            pos[0] += Game.TILESIZE
+            pos[0] += space
 
         for sec in display_time[1]:
             win.blit(self.nums[sec], pos)
-            pos[0] += Game.TILESIZE
+            pos[0] += space
         
     
     def convert_to_minutes_and_seconds(self):

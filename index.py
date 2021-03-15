@@ -24,7 +24,7 @@ from tilemap import Tilemap
 from item import update_items, create_item, Item
 from timer import GameTimer
 
-LEVEL = 1
+LEVEL = 2
 
 gun = Gun(load_json("./main.json")["items"]["pistol"])
 gun.animation_player.init()

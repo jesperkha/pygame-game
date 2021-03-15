@@ -1,3 +1,8 @@
+
+# Set path for imports
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
 import pygame
 from utility.controller import update_controllers, Controller
 from VARIABLES import Game
@@ -16,13 +21,15 @@ fullscreen = False
 
 # ---------------- TEST ZONE ----------------
 
-from player import Player, update_players
-from bullet import update_bullets
-from guns import Gun
+from classes.player import Player, update_players
+from classes.bullet import update_bullets
+from classes.guns import Gun
 from utility.files import load_json
-from tilemap import Tilemap
-from item import update_items, create_item, Item
-from timer import GameTimer
+from classes.tilemap import Tilemap
+from classes.item import update_items, create_item, Item
+from classes.timer import GameTimer
+from classes.animation import EffectAnimation
+from random import randrange
 
 LEVEL = 2
 
@@ -44,6 +51,14 @@ c = Controller()
 c.listen(pygame.K_k, "keypressed", create_item)
 
 t = GameTimer()
+
+e = EffectAnimation(load_json("./e.json"))
+e.load()
+
+def play_effect():
+    e.play_effect((randrange(0, 100), randrange(0, 100)))
+
+c.listen(pygame.K_e, "keypressed", play_effect)
 
 # -------------------------------------------
 
@@ -82,7 +97,9 @@ while run:
         update_bullets(buffer)
         update_players(buffer)
         update_items(buffer)
+
         t.update(buffer)
+        e.update(buffer)
 
         
     # Window rendering and buffer sizing

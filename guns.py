@@ -7,19 +7,19 @@ from utility.animation import AnimationPlayer
 
 
 class Gun:
-    def __init__(self, size: tuple, offset: int, sprite_path: str, animation_path: str, num_frames: int, recoil: int):
-        s = transform.scale(image.load(sprite_path).convert_alpha(), size)
+    def __init__(self, json: dict):
+        s = image.load(json["sprite_path"]).convert_alpha()
         self.sprite = [s, transform.flip(s, True, False)]
 
-        self.w = size[0]
-        self.h = size[1]
-        self.offset = offset
+        self.w = json["width"]
+        self.h = json["height"]
+        self.offset = json["offset"]
 
         self.mag_size = Game.MAG_SIZE
-        self.recoil = recoil
+        self.recoil = json["recoil"]
 
         self.ANIMATING = False
-        self.animation_player = AnimationPlayer(animation_path, num_frames, 15, size)
+        self.animation_player = AnimationPlayer(json["animation_path"], json["frames"], 15)
     
 
     def update(self, player_size, pos, dir, win):

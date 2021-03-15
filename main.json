@@ -5,7 +5,8 @@
 			"animation_path": "./src/guns/pistol/pistol-shoot",
 			"frames": 3,
 			"offset": 16,
-			"size": [32, 32],
+			"width": 32,
+			"height": 32,
 			"recoil": 5
 		}
 	}

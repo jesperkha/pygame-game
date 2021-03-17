@@ -20,7 +20,7 @@ class Gun:
         self.recoil = json["recoil"]
 
         self.ANIMATING = False
-        self.animation_player = AnimationPlayer(json["animation_path"], json["frames"], 15)
+        self.animation_player = AnimationPlayer(json["animation"])
 
     
     def load(self):

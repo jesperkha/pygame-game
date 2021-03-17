@@ -10,7 +10,7 @@ class Game:
     INGAME = 1
     PAUSE = 2
 
-    STATE = MENU
+    STATE = INGAME
 
     # Game
     HEIGHT = 320
@@ -28,5 +28,5 @@ class Game:
     BULLET_SPEED = 5
     BULLET_CAP = 20
     GUN_RECOIL = 5
-    RELOAD_TIME = 2
-    MAG_SIZE = 999
+    RELOAD_TIME = 4
+    MAG_SIZE = 10

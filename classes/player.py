@@ -7,6 +7,8 @@ from functools import partial
 from utility.vector import Vector
 from utility.controller import Controller
 from utility.collision import check_collision_rect_points
+from utility.files import load_json
+from utility.animation import AnimationPlayer
 
 from VARIABLES import Game
 from .bullet import Bullet
@@ -34,7 +36,7 @@ class Player:
         self.direction = -1 # -1: Left, 1: Right
 
         self.size = Vector(size[0], size[1])
-        self.hurtbox_radius = self.size.y/2
+        self.hurtbox_radius = self.size.y/1.5
         self.grab_range = Game.TILESIZE
 
         # if img:
@@ -55,6 +57,8 @@ class Player:
         self.gun = gun
         self.mag_size = self.gun.mag_size
         self.ammo = self.mag_size
+        self.reload_animation = AnimationPlayer(load_json("./json/reload_animation.json"))
+        self.reload_animation.load() # ----- REMOVE ----- #
 
         # Flags
         self.SHOW_HURTBOX = False
@@ -84,13 +88,16 @@ class Player:
 
         # Bullet collision
         hit = False
+        dir = 0
         if not self.INVINCIBLE:
             for b in Bullet.bullets:
                 if Vector.dist(self.pos, b.pos) < self.hurtbox_radius and b.state:
                     hit = True
+                    dir = b.dir
+                    b.explode()
             
             if hit:
-                self.got_hit()
+                self.got_hit(dir)
 
 
         # Ground and wall collision
@@ -131,19 +138,27 @@ class Player:
         # Check for item collision
         self.check_for_items()
 
+        # Check fot reload
+        if not self.RELOADING and self.ammo == 0:
+            self.reload_gun()
+
         # ------------------------------------------------------
+
+        if self.RELOADING:
+            win.blit(self.reload_animation.animate(self.direction, False, True), (self.pos.x, self.pos.y - Game.TILESIZE))
+            
 
         # Render gun
         if self.gun:
             self.gun.update(self.size, self.pos, self.direction, win)
 
-        if self.SHOW_HURTBOX:
-            draw.circle(win, (0, 0, 250), (self.pos.x + self.size.x/2, self.pos.y + self.size.y/2), self.hurtbox_radius)
-
         if self.image:
             win.blit(self.image, (self.pos.x, self.pos.y))
         else:
             draw.rect(win, (235, 26, 109), (self.pos.x, self.pos.y, self.size.x, self.size.y))
+
+        if self.SHOW_HURTBOX:
+            draw.circle(win, (0, 0, 250), (self.pos.x + self.size.x/2, self.pos.y + self.size.y/2), self.hurtbox_radius)
 
     
     # Find collision side on THIS player
@@ -216,8 +231,9 @@ class Player:
     
     # Called when player is shot
     # Called from update()
-    def got_hit(self):
-        pass
+    def got_hit(self, dir):
+        self.apply_force(20 * dir, 0)
+        # self.health -= 10
 
 
     # Called when player tries to shoot with no ammo left
@@ -232,6 +248,7 @@ class Player:
     def finish_reload(self):
         self.ammo = self.mag_size
         self.RELOADING = False
+        self.reload_animation.reset()
 
     
     # Do collision for tile

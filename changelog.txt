@@ -12,3 +12,6 @@ Changelog
 17.03.21
     Signals have been added to utility module
     Added font class for drawing text
+    Reloading now has an animation
+    Bullets also have an animation when expoding
+    Players recieve knockback when hit

@@ -4,9 +4,9 @@ from utility.vector import Vector
 from utility.files import load_json
 from VARIABLES import Game
 from pygame import image
-from classes.animation import EffectAnimation
+from utility.animation import EffectAnimation
 
-explosion_effect = EffectAnimation(load_json("./src/effects/bullet_explosion.json"))
+explosion_effect = EffectAnimation(load_json("./json/bullet_explosion.json"))
 
 def load():
     explosion_effect.load()
@@ -58,13 +58,17 @@ class Bullet:
             for tile in collision_map:
                 if tile[0] != 2:
                     if abs(self.pos.x - tile[2]) < Game.TILESIZE and abs(self.pos.y - tile[3]) < Game.TILESIZE:
-                        explosion_effect.play_effect((self.pos.x + Game.TILESIZE/2 * self.dir, self.pos.y))
-                        self.die()
+                        self.explode()
     
 
     def die(self):
         self.state = False
         Bullet.live_bullets -= 1
+
+
+    def explode(self):
+        explosion_effect.play_effect((self.pos.x + Game.TILESIZE/2 * self.dir, self.pos.y))
+        self.die()
 
 
     @staticmethod

@@ -46,42 +46,31 @@ from utility.files import load_json
 from classes.tilemap import Tilemap
 from classes.item import update_items, create_item, Item, load_items
 from classes.timer import GameTimer
-from classes.animation import EffectAnimation, update_effects
+from utility.animation import update_effects
 from random import randrange
 from menu import update_main_menu
 
-LEVEL = 2
 
-loading_queue.append(load_items)
+load_items()
 
-level_json = load_json(f"./levels/level{LEVEL}.json")
+level_json = load_json("./levels/level2.json")
 Game.WALL_LOOP = level_json["screen_loop"]
-
 background = pygame.image.load(level_json["background"])
-
-gun = Pistol()
-loading_queue.append(gun.load)
-
-player = Player((20, 0), (16, 16), [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], gun)
-player.collision_map = Tilemap(level_json["collision_map"])
-
-Game.TILEMAP = Tilemap(level_json["tilemap"])
-Item.collision_map = load_json(level_json["collision_map"])
-
-c = Controller()
-c.listen(pygame.K_k, "keypressed", create_item)
-
-t = GameTimer()
-
 cm = load_json(level_json["collision_map"])
 
-def pause():
-    if not Game.STATE == Game.PAUSE:
-        Game.STATE = Game.PAUSE
-    else:
-        Game.STATE = Game.INGAME
+Item.collision_map = cm
+Game.TILEMAP = Tilemap(level_json["tilemap"])
 
-c.listen(pygame.K_p, "keypressed", pause)
+gun = Pistol()
+gun.load()
+player = Player((150, 0), (16, 16), [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], gun)
+player.collision_map = Tilemap(level_json["collision_map"])
+
+gun2 = Pistol()
+gun2.load()
+player2 = Player((Game.WIDTH - 166, 0), (16, 16), [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], gun2)
+player2.collision_map = Tilemap(level_json["collision_map"])
+
 
 # ------------------------------------------- #
 
@@ -118,7 +107,6 @@ while run:
         update_players(buffer)
         update_items(buffer)
         update_effects(buffer)
-        t.update(buffer)
 
     elif Game.STATE == Game.MENU:
         update_main_menu(buffer)
@@ -136,7 +124,7 @@ while run:
 
     buffer_scale = [buffer_width, buffer_height]
     buffer_pos = [int((window.get_width() - buffer_width) / 2), int((window.get_height() - buffer_height) / 2)]
-    window.blit(pygame.transform.smoothscale(buffer, buffer_scale), buffer_pos)
+    window.blit(pygame.transform.scale(buffer, buffer_scale), buffer_pos)
     pygame.display.update()
 
 

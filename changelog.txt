@@ -1,0 +1,14 @@
+Changelog
+
+16.03.21
+    Added changelog
+    Bullets now collide with walls and cause an animation to trigger
+    New loading function to load all assets at once
+    Changed the names of some class methods to "load()"
+    Guns are now subclasses of the Gun class instead of seperate instances
+    You can now pause the game
+
+
+17.03.21
+    Signals have been added to utility module
+    Added font class for drawing text

@@ -3,8 +3,14 @@
 from pygame import image
 from VARIABLES import Game
 
+def update_effects(win):
+    for e in EffectAnimation.effects:
+        e.update(win)
+        
+
 class EffectAnimation:
     pool_size = 10
+    effects = []
 
     def __init__(self, json: dict) -> None:
         self.frames = []
@@ -12,6 +18,8 @@ class EffectAnimation:
         self.num_frames = None
         self.pool = []
         self.json = json
+
+        EffectAnimation.effects.append(self)
     
 
     def load(self):

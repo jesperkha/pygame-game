@@ -4,12 +4,13 @@ from utility.vector import Vector
 from pygame import image, transform
 from VARIABLES import Game
 from utility.animation import AnimationPlayer
+from utility.files import load_json
 
 
 class Gun:
     def __init__(self, json: dict):
-        s = image.load(json["sprite_path"]).convert_alpha()
-        self.sprite = [s, transform.flip(s, True, False)]
+        self.json = json
+        self.sprite = None
 
         self.w = json["width"]
         self.h = json["height"]
@@ -20,6 +21,12 @@ class Gun:
 
         self.ANIMATING = False
         self.animation_player = AnimationPlayer(json["animation_path"], json["frames"], 15)
+
+    
+    def load(self):
+        s = image.load(self.json["sprite_path"]).convert_alpha()
+        self.sprite = [s, transform.flip(s, True, False)]
+        self.animation_player.load()
     
 
     def update(self, player_size, pos, dir, win):
@@ -44,3 +51,11 @@ class Gun:
     def shoot(self):
         self.ANIMATING = True
         self.animation_player.reset()
+
+
+
+# Types of guns ------------------------------------------------ #
+
+class Pistol(Gun):
+    def __init__(self):
+        super().__init__(load_json("./main.json")["items"]["pistol"])

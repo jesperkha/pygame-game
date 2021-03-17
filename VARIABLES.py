@@ -10,10 +10,11 @@ class Game:
     INGAME = 1
     PAUSE = 2
 
+    STATE = MENU
+
     # Game
     HEIGHT = 320
     WIDTH = int(HEIGHT * ASPECT_RATIO)
-    STATE = INGAME
     WALL_LOOP = True
     TILEMAP = None
 

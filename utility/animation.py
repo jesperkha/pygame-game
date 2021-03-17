@@ -1,6 +1,7 @@
 # Animation player for easy animations
 
 from pygame import image, transform
+from VARIABLES import Game
 
 class AnimationPlayer:
     def __init__(self, animation_frames_path: str, num_frames: int, fps: int) -> None:
@@ -13,7 +14,7 @@ class AnimationPlayer:
         self.on_frame = 0
 
     
-    def init(self):
+    def load(self):
         # Adds pygame images to frames list
         for n in range(self.num_frames):
             s = image.load(f"{self.path}{n}.png").convert_alpha()

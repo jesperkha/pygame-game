@@ -1,26 +1,41 @@
+# IMPORTS --------------------------------------------- #
+import pygame
 
-# Set path for imports
+from VARIABLES import Game
+from menu import update_menu, load_menu
+
+import classes.tilemap as tilemap
+import classes.bullet as bullet
+import classes.player as player
+import classes.timer as timer
+import classes.item as item
+import classes.guns as guns
+
+import utility.controller as controller
+import utility.animation as animation
+import utility.files as files
+
+
+# Set path for imports (root)
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
-import pygame
-from utility.controller import update_controllers, Controller
-from VARIABLES import Game
-
-pygame.init()
-clock = pygame.time.Clock()
 
 # Window and window buffer
-START_SCALE = 1.3
+pygame.init()
+clock = pygame.time.Clock()
+START_SCALE = 1
+fullscreen = False
+background = pygame.Surface((Game.WIDTH, Game.HEIGHT))
 monitor_size = [pygame.display.Info().current_w, pygame.display.Info().current_h]
 window = pygame.display.set_mode((int(800 * START_SCALE), int(450 * START_SCALE)), pygame.RESIZABLE)
 buffer = pygame.Surface((Game.WIDTH, Game.HEIGHT))
 buffer_scale = [int(window.get_height() * Game.ASPECT_RATIO), window.get_height()]
 buffer_pos = [(window.get_width() - buffer.get_width()) / 2, 0]
-fullscreen = False
 
-pygame.display.set_caption("17.03.21")
-pygame.display.set_icon(pygame.transform.scale(pygame.image.load("./src/items/item1.png").convert_alpha(), (100, 100)))
+pygame.display.set_caption("18.03.21")
+pygame.display.set_icon(pygame.image.load("./src/items/item1.png").convert_alpha())
+
 
 # resize window
 def resize(w, h):
@@ -30,54 +45,40 @@ def resize(w, h):
         pygame.display.set_mode(monitor_size, pygame.FULLSCREEN)
 
 
-# Load all assets at once
-loading_queue = [] # append loading functions to queue
-def load_game():
-    for asset in loading_queue:
-        asset()
-    
+# load game assets all at once
+def load_assets():
+    load_menu()
+    item.load_items()
+    bullet.load_bullets()
 
-# ---------------- TEST ZONE ---------------- #
+    level_json = files.load_json("./levels/level2.json")
+    Game.WALL_LOOP = level_json["screen_loop"]
 
-from classes.player import Player, update_players
-from classes.bullet import update_bullets
-from classes.guns import Pistol
-from utility.files import load_json
-from classes.tilemap import Tilemap
-from classes.item import update_items, create_item, Item, load_items
-from classes.timer import GameTimer
-from utility.animation import update_effects
-from random import randrange
-from menu import update_main_menu
+    global background
+    background = pygame.image.load(level_json["background"])
 
+    bullet.Bullet.collision_map = files.load_json(level_json["collision_map"])
+    item.Item.collision_map = files.load_json(level_json["collision_map"])
 
-load_items()
+    Game.TILEMAP = tilemap.Tilemap(level_json["tilemap"])
+    Game.TIMER = timer.GameTimer()
 
-level_json = load_json("./levels/level2.json")
-Game.WALL_LOOP = level_json["screen_loop"]
-background = pygame.image.load(level_json["background"])
-cm = load_json(level_json["collision_map"])
+    gun = guns.Pistol()
+    gun.load()
+    p1 = player.Player((150, 0), (16, 16), [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], gun)
+    p1.collision_map = tilemap.Tilemap(level_json["collision_map"])
 
-Item.collision_map = cm
-Game.TILEMAP = Tilemap(level_json["tilemap"])
-
-gun = Pistol()
-gun.load()
-player = Player((150, 0), (16, 16), [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], gun)
-player.collision_map = Tilemap(level_json["collision_map"])
-
-gun2 = Pistol()
-gun2.load()
-player2 = Player((Game.WIDTH - 166, 0), (16, 16), [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], gun2)
-player2.collision_map = Tilemap(level_json["collision_map"])
+    # gun2 = guns.Pistol()
+    # gun2.load()
+    # p2 = player.Player((Game.WIDTH - 166, 0), (16, 16), [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], gun2)
+    # p2.collision_map = tilemap.Tilemap(level_json["collision_map"])
 
 
-# ------------------------------------------- #
+# GAME LOOP ----------------------------------------------------------------------------- #
 
-# Loads game assets before game loop starts
-load_game()
+# Loads assets first
+load_assets()
 
-# Gameloop
 run = True
 while run:
     # Key controls for window and resizing
@@ -93,27 +94,32 @@ while run:
         if event.type == pygame.VIDEORESIZE:
             resize(event.w, event.h)
 
+    controller.update_controllers()
 
-    # Game states ---------------------------------------------------------- #
 
-    update_controllers()
-
+    # INGAME LOOP ---------------------------------------------------------------------- #
     if Game.STATE == Game.INGAME:
-        buffer.fill((0, 0, 0))
         buffer.blit(background, (0, 0))
         if Game.TILEMAP:
             Game.TILEMAP.update(buffer)
-        update_bullets(buffer, cm)
-        update_players(buffer)
-        update_items(buffer)
-        update_effects(buffer)
+        if Game.TIMER:
+            Game.TIMER.update(buffer)
+        bullet.update_bullets(buffer)
+        player.update_players(buffer)
+        item.update_items(buffer)
+        animation.update_effects(buffer)
 
-    elif Game.STATE == Game.MENU:
-        update_main_menu(buffer)
 
-    elif Game.STATE == Game.PAUSE:
+    # MENU LOOP ------------------------------------------------------------------------ #
+    if Game.STATE == Game.MENU:
+        update_menu(buffer)
+
+
+    # LOADING GAME --------------------------------------------------------------------- #
+    if Game.STATE == Game.LOADING:
         pass
         
+
     # Window rendering and buffer sizing
     window.fill((0, 0, 0))
     buffer_width = int(window.get_height() * Game.ASPECT_RATIO)
@@ -126,6 +132,25 @@ while run:
     buffer_pos = [int((window.get_width() - buffer_width) / 2), int((window.get_height() - buffer_height) / 2)]
     window.blit(pygame.transform.scale(buffer, buffer_scale), buffer_pos)
     pygame.display.update()
+
+    # Set mouse position relative to screen
+    ratio_x = (window.get_width() / buffer.get_width())
+    ratio_y = (window.get_height() / buffer.get_height())
+    mouse_pos = pygame.mouse.get_pos()
+    Game.MOUSE = [mouse_pos[0] / ratio_x, mouse_pos[1] / ratio_y]
+
+    # Toggle mouse press
+    btn = pygame.mouse.get_pressed(num_buttons=3)[0]
+    if btn:
+        if Game.MOUSE_RELEASED:
+            Game.MOUSE_CLICKED = True
+            Game.MOUSE_RELEASED = False
+        else:
+            Game.MOUSE_CLICKED = False
+    else:
+        Game.MOUSE_CLICKED = False
+        Game.MOUSE_RELEASED = True
+
 
 
 pygame.quit()

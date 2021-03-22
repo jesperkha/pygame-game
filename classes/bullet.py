@@ -8,21 +8,18 @@ from utility.animation import EffectAnimation
 
 explosion_effect = EffectAnimation(load_json("./json/bullet_explosion.json"))
 
-def load():
+def load_bullets():
     explosion_effect.load()
     s1 = image.load("./src/bullet/bullet-left.png").convert_alpha()
     s2 = image.load("./src/bullet/bullet-right.png").convert_alpha()
     Bullet.sprites = [s1, s2]
-
-
-def update_bullets(win, collision_map):
-    for b in Bullet.bullets:
-        b.update(win, collision_map)
-
-
-def init_bullets():
     for _ in range(Game.BULLET_CAP):
         Bullet((0, 0), 1)
+
+
+def update_bullets(win):
+    for b in Bullet.bullets:
+        b.update(win)
 
 
 class Bullet:
@@ -34,6 +31,8 @@ class Bullet:
     w = Game.TILESIZE
     h = Game.TILESIZE
 
+    collision_map = None
+
     def __init__(self, pos: tuple, dir: int) -> None:
         self.pos = Vector(pos[0], pos[1])
         self.dir = dir
@@ -42,7 +41,7 @@ class Bullet:
         Bullet.bullets.append(self)
 
 
-    def update(self, win, collision_map):
+    def update(self, win):
         if self.state:
             self.pos.x += Game.BULLET_SPEED * self.dir
 
@@ -55,10 +54,11 @@ class Bullet:
                 win.blit(Bullet.sprites[1], (self.pos.x, self.pos.y))
             
             # check collision with collision map
-            for tile in collision_map:
-                if tile[0] != 2:
-                    if abs(self.pos.x - tile[2]) < Game.TILESIZE and abs(self.pos.y - tile[3]) < Game.TILESIZE:
-                        self.explode()
+            if Bullet.collision_map:
+                for tile in Bullet.collision_map:
+                    if tile[0] != 2:
+                        if abs(self.pos.x - tile[2]) < Game.TILESIZE and abs(self.pos.y - tile[3]) < Game.TILESIZE:
+                            self.explode()
     
 
     def die(self):
@@ -90,7 +90,3 @@ class Bullet:
     def rotate():
         # Rotates list bakwards
         Bullet.bullets = Bullet.bullets[1:] + Bullet.bullets[:1]
-
-
-load()
-init_bullets()

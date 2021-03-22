@@ -48,9 +48,6 @@ class AnimationPlayer:
         self.tick = 0
 
 
-
-
-
 # EFFECTS --------------------------------------------------------- #
 
 # Animation class for one play only

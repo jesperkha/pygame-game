@@ -1,9 +1,9 @@
 # Font class
 
-from pygame import image, Rect
+from pygame import image, Rect, transform
 
 # LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,:!?"
-LETTERS = "ABC"
+LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 class Font:
     def __init__(self, filename) -> None:
@@ -21,7 +21,7 @@ class Font:
     
 
     def load(self):
-        self.font_image = image.load(self.filename).convert()
+        self.font_image = image.load(self.filename).convert_alpha()
 
         current_width = 0
         current_char = 0
@@ -36,11 +36,18 @@ class Font:
                 current_width += 1
 
     
-    def render(self, win: object, pos: tuple, text: str, letter_spacing: int = 1):
-        space = 0
+    def render(self, win: object, pos: tuple, text: str, letter_spacing: int = 1, scale: int = 1) -> tuple:
+        space = 0 # acts as string width
+        height = 0
+        x = pos[0]
+        y = pos[1]
+
         for letter in text:
-            win.blit(self.chars[letter], (pos[0] + space, pos[1]))
-            space += self.chars[letter].get_width() + letter_spacing
+            pre_char = self.chars[letter]
+            char = transform.scale(pre_char, (pre_char.get_width() * scale, pre_char.get_height() * scale))
+            win.blit(char, (pos[0] + space, pos[1]))
+            space += char.get_width() + letter_spacing * scale
+            height = char.get_height()
 
-
-
+        # returns size of string
+        return (x, y, space, height)

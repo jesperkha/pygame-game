@@ -1,7 +1,7 @@
 # Platform class
 
 from utility.vector import Vector
-from pygame import draw, Rect
+from pygame import draw
 
 
 def update_platforms(win):

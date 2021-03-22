@@ -2,12 +2,15 @@
 	"items": {
 		"pistol": {
 			"sprite_path": "./src/guns/pistol/pistol.png",
-			"animation_path": "./src/guns/pistol/pistol-shoot",
-			"frames": 3,
 			"offset": 16,
 			"width": 32,
 			"height": 32,
-			"recoil": 5
+			"recoil": 2,
+			"animation": {
+				"path": "./src/guns/pistol/pistol-shoot",
+				"fps": 15,
+				"num_frames": 3
+			}
 		}
 	}
 }

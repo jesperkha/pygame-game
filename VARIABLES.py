@@ -9,15 +9,21 @@ class Game:
     MENU = 0
     INGAME = 1
     PAUSE = 2
+    LOADING = 3
+
+    STATE = MENU
 
     # Game
     HEIGHT = 320
     WIDTH = int(HEIGHT * ASPECT_RATIO)
-    STATE = INGAME
     WALL_LOOP = True
     TILEMAP = None
+    MOUSE = [0, 0]
+    MOUSE_CLICKED = False
+    MOUSE_RELEASED = True
+    TIMER = None
 
-    # Player
+    # Player 
     JUMP_HEIGHT = 7
     WALK_SPEED = 1
     GRAVITY = 0.4
@@ -25,7 +31,7 @@ class Game:
 
     # Guns
     BULLET_SPEED = 5
+    RELOAD_TIME = 4
     BULLET_CAP = 20
     GUN_RECOIL = 5
-    RELOAD_TIME = 2
-    MAG_SIZE = 999
+    MAG_SIZE = 10

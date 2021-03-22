@@ -4,5 +4,5 @@
 	"tilemap": "./levels/tilemaps/level-3T.json",
 	"collision_map": "./levels/tilemaps/level-2C.json",
 	"music": "",
-	"screen_loop": true
+	"screen_loop": false
 }

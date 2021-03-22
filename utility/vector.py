@@ -7,6 +7,21 @@ class Vector:
         self.x = x
         self.y = y
 
+    def __add__(self, other):
+        return Vector(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other):
+        return Vector(self.x - other.x, self.y - other.y)
+
+    def __mul__(self, other):
+        return Vector(self.x * other.x, self.y * other.y)
+
+    def __div__(self, other):
+        return Vector(self.x / other.x, self.y / other.y)
+
+    def __repr__(self):
+        return f"x: {self.x}, y: {self.y}"
+
     def add(self, other):
         self.x += other.x
         self.y += other.y

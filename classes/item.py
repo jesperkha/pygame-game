@@ -102,5 +102,3 @@ class Item:
             
             win.blit(self.sprite, (self.pos.x, self.pos.y))
 
-
-load_items()

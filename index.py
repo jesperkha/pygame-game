@@ -33,7 +33,7 @@ buffer = pygame.Surface((Game.WIDTH, Game.HEIGHT))
 buffer_scale = [int(window.get_height() * Game.ASPECT_RATIO), window.get_height()]
 buffer_pos = [(window.get_width() - buffer.get_width()) / 2, 0]
 
-pygame.display.set_caption("18.03.21")
+pygame.display.set_caption("My Game")
 pygame.display.set_icon(pygame.image.load("./src/items/item1.png").convert_alpha())
 
 
@@ -65,8 +65,9 @@ def load_assets():
 
     gun = guns.Pistol()
     gun.load()
-    p1 = player.Player((150, 0), (16, 16), [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], gun)
+    p1 = player.Player((150, 0), (16, 16), [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], gun, "./src/player")
     p1.collision_map = tilemap.Tilemap(level_json["collision_map"])
+    p1.load()
 
     # gun2 = guns.Pistol()
     # gun2.load()
@@ -83,6 +84,8 @@ run = True
 while run:
     # Key controls for window and resizing
     clock.tick(Game.FPS)
+    dt = clock.get_time()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             run = False
@@ -104,6 +107,7 @@ while run:
             Game.TILEMAP.update(buffer)
         if Game.TIMER:
             Game.TIMER.update(buffer)
+
         bullet.update_bullets(buffer)
         player.update_players(buffer)
         item.update_items(buffer)
@@ -140,7 +144,7 @@ while run:
     Game.MOUSE = [mouse_pos[0] / ratio_x, mouse_pos[1] / ratio_y]
 
     # Toggle mouse press
-    btn = pygame.mouse.get_pressed(num_buttons=3)[0]
+    btn = pygame.mouse.get_pressed()[0]
     if btn:
         if Game.MOUSE_RELEASED:
             Game.MOUSE_CLICKED = True

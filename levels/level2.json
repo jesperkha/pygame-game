@@ -1,7 +1,7 @@
 {
 	"level": 2,
-	"background": "./src/background/bg4.png",
-	"tilemap": "./levels/tilemaps/level-3T.json",
+	"background": "./src/background/bg5.png",
+	"tilemap": "./levels/tilemaps/level-2T.json",
 	"collision_map": "./levels/tilemaps/level-2C.json",
 	"music": "",
 	"screen_loop": false

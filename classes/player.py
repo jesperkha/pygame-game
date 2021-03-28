@@ -1,7 +1,7 @@
 # Player class
 
 from utility.methods import set_timeout
-from pygame import draw
+from pygame import draw, image
 from functools import partial
 
 from utility.vector import Vector
@@ -23,7 +23,7 @@ def update_players(win):
 class Player:
     players = []
 
-    def __init__(self, pos: tuple, size: tuple, keys: list, gun: object) -> None:
+    def __init__(self, pos: tuple, size: tuple, keys: list, gun: object, sprite_path: str = None) -> None:
         self.pos = Vector(pos[0], pos[1])
         self.vel = Vector(0, 0)
         self.grv = Game.GRAVITY
@@ -39,11 +39,8 @@ class Player:
         self.hurtbox_radius = self.size.y/1.5
         self.grab_range = Game.TILESIZE
 
-        # if img:
-        #     self.image = image.load(img).convert_alpha()
-        #     self.image = transform.scale(self.image, (self.size.x, self.size.y))
-        # else:
-        self.image = None
+        self.sprite_path = sprite_path
+        self.sprites = []
         self.collision_map = None
 
         # Key controls
@@ -58,7 +55,6 @@ class Player:
         self.mag_size = self.gun.mag_size
         self.ammo = self.mag_size
         self.reload_animation = AnimationPlayer(load_json("./json/reload_animation.json"))
-        self.reload_animation.load() # ----- REMOVE ----- #
 
         # Flags
         self.SHOW_HURTBOX = False
@@ -66,6 +62,16 @@ class Player:
         self.RELOADING = False
 
         Player.players.append(self)
+
+    
+    # Load sprites
+    def load(self):
+        if self.sprite_path:
+            s = ["right", "left", "hat0"]
+            for n in range(len(s)):
+                self.sprites.append(image.load(f"{self.sprite_path}/{s[n]}.png"))
+
+        self.reload_animation.load()
 
 
     # Called from update_players() 
@@ -152,8 +158,14 @@ class Player:
         if self.gun:
             self.gun.update(self.size, self.pos, self.direction, win)
 
-        if self.image:
-            win.blit(self.image, (self.pos.x, self.pos.y))
+        if self.sprite_path:
+            dir = None
+            if self.direction == 1:
+                dir = 0
+            else:
+                dir = 1
+            win.blit(self.sprites[dir], (self.pos.x, self.pos.y))
+            win.blit(self.sprites[2], (self.pos.x, self.pos.y - self.size.y))
         else:
             draw.rect(win, (235, 26, 109), (self.pos.x, self.pos.y, self.size.x, self.size.y))
 

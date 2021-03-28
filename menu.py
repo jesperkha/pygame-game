@@ -1,8 +1,7 @@
 # menu related rendering
 
 from classes.font import Font
-from pygame import mouse, draw
-from utility.signals import Signal
+from pygame import draw
 from VARIABLES import Game
 
 # TITLE, SETTINGS, GAME_SELECT, INGAME, CREDITS

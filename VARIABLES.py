@@ -11,7 +11,7 @@ class Game:
     PAUSE = 2
     LOADING = 3
 
-    STATE = MENU
+    STATE = INGAME
 
     # Game
     HEIGHT = 320
